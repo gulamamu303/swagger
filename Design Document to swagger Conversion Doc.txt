@@ -1,0 +1,503 @@
+﻿REST API Design Document: HR Interview Management System
+Version: 1.0.12
+Base URL: https://localhost:8080/hrims/v1
+Description:
+The HR Interview Management System API enables efficient handling of candidate information, interviewer assignments, interview scheduling (with Google Meet integration), and structured feedback collection. Email notifications and calendar invites are sent automatically for each session.
+
+
+Some useful links:
+1)Presentation https://docs.google.com/presentation/d/1yc0dL_xGyP9pkDesQY6X1V8sHbYCGyLja2me3DjQFQs/edit?usp=sharing
+2)Screens
+https://docs.google.com/document/d/1_o5z5kxvMjHaoTjLEozBM7wojXPuFuw34zWZBgKVWnE/edit?usp=sharing
+
+
+
+
+________________
+
+
+API Resources Overview
+Resource
+	Description
+	/tech
+	Manage technologies
+	/candidate
+	Manage candidate information
+	/interviewer
+	Manage interviewer information
+	/schedule
+	Schedule and manage interviews
+	/user
+	Manage users
+	________________
+
+
+Endpoints
+1. Technology Management (/tech)
+Add Technology
+* POST /tech
+   * Summary:  Add a new technology to the database.
+   * Description: Add a new technology to the database.
+   * Tags: tech
+   * OperationId: addTech
+   * Request Body: 
+{
+  "name": "Java"
+}
+   * Responses:
+      * 200: Successful operation
+{
+  "id": 1,
+  "name": "Java"
+}
+      * 400: Invalid input
+      * 422: Validation exception
+{
+  "code": 400,
+  "message": "DB Down"
+}
+Get All Technologies
+* GET /tech
+   * Summary:  Retrieve all technologies from the database.
+   * Description: Retrieve all technologies.
+   * Tags: tech
+   * OperationId: getTech
+   * Responses:
+      * 200: Successful operation
+[{
+  "id": 1,
+  "name": "Java"
+}]
+      * 400: Invalid status value
+Update Technology
+* PUT /tech{id}
+   * Summary:  Update technologies in the database.
+   * Description: Update an existing technology.
+   * Tag: Tech
+   * OperationId: updateTech
+   * Path Parameter: 
+      * id :(string, required) (id that need to be updated)
+   * Request Body:
+{
+  "name": "Java"
+}
+* Responses:
+   * 200: Technology updated
+{
+  "id": 1,
+  "name": "Java"
+}
+* 400: Invalid input
+Delete Technology
+* DELETE /tech{id}
+   * Description: Delete a technology.
+   * Summary:  Delete technologies in the database.
+   * Tag: Tech
+   * OperationId: deleteTech
+   * Path Parameter: id (string, required)
+   * Responses:
+      * 200: Technology deleted
+      * 400: Invalid input
+________________
+
+
+2. Candidate Management (/candidate)
+Get All Candidates
+* GET /candidate
+   * Summary: Retrieve all candidates from the database.
+   * Description: Retrieve all candidates.
+   * Tag: Candidates
+   * OperationId: getCandidate
+
+
+
+
+
+
+   * Responses:
+      * 200: successful operation
+[
+  {
+    "id": 1,
+    "name": "Santosh",
+    "email": "santosh.mahato@telusinternational.com",
+    "position": "Team Lead",
+    "resume": "TBD",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  }
+]
+      * 400: Invalid input
+Add Candidate
+* POST /candidate
+   * Summary: Add candidate details in DB.
+   * Description: Add  candidate details in DB.
+   * Tag: Candidates
+   * OperationId: addCandidate
+   * Request Body:
+{
+    "name": "Santosh",
+    "email": "santosh@example.com",
+    "position": "Team Lead",
+    "resume": "https://example.com/resume.pdf",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  }
+   * Responses:
+      * 200: Candidate added 
+{
+     “id”:1,
+    "name": "Santosh",
+    "email": "santosh@example.com",
+    "position": "Team Lead",
+    "resume": "https://example.com/resume.pdf",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }]}
+      * 400: Invalid input
+Update Candidate
+* PUT /candidate/{id}
+   * Summary: Update candidate in the database.
+   * Description: Update candidate details.
+   * Tag: Candidates
+   * OperationId: updateCondidate
+   * Path Parameter: id(string, required) (id that need to be updated)
+   * Request Body: 
+{
+    "name": "Santosh",
+    "email": "santosh@example.com",
+    "position": "Team Lead",
+    "resume": "https://example.com/resume.pdf",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  }
+   * Responses:
+      * 200: Candidate updated
+{
+    “id”:1
+    "name": "Santosh",
+    "email": "santosh@example.com",
+    "position": "Team Lead",
+    "resume": "https://example.com/resume.pdf",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  }
+      * 400: Invalid input
+Delete Candidate
+* DELETE /candidate/{id}
+   * Summary: Delete condidate from the database.
+   * Description: Delete a candidate.
+   * Tag: Candidates
+   * OperationId: deleteCondidate
+   * Path Parameter: id (string, required)
+   * Responses:
+      * 200: Candidate deleted
+      * 400: Invalid input
+________________
+
+
+3. Interviewer Management (/interviewer)
+Get All Interviewers
+* GET /interviewer
+   * Summary: Retrieve all interviewers from the database.
+   * Description: Retrieve all interviewers.
+   * Tag: Interviewers
+   * OperationId: getInterviewers
+   * Responses:
+      * 200: Successful Operation
+[
+  {
+    "id": 1,
+    "name": "Narendra",
+    "emailId": "narendra.kolluru@telusinternational.com",
+    "designation": "Project Manager",
+    "department": "Development",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  }
+]
+Add Interviewer
+* POST /interviewer
+   * Summary: Add interviewers to the database.
+   * Description: Add interviewers.
+   * Tag: Interviewers
+   * OperationId: addInterviewer
+   * Request Body: 
+{
+  "name": "Narendra",
+  "emailId": "narendra.kolluru@telusinternational.com",
+  "designation": "Project Manager",
+  "department": "Development",
+  "tech": [
+    {
+      "id": 1,
+      "name": "Java"
+    }
+  ]
+}
+   * Responses:
+      * 200: Interviewer added 
+{
+  "id": 1,
+  "name": "Narendra",
+  "emailId": "narendra.kolluru@telusinternational.com",
+  "designation": "Project Manager",
+  "department": "Development",
+  "tech": [
+    {
+      "id": 1,
+      "name": "Java"
+    }
+  ]
+}
+      * 400: Invalid input
+Update Interviewer
+* PUT /interviewer/{id}
+   * Summary: Update interviewers to the database.
+   * Description: Update interviewers.
+   * Tag: Interviewers
+   * OperationId: updateInterviewer
+   * Path Parameter: id(string, required) (id that need to be updated)
+   * Request Body: 
+{
+  "name": "Narendra",
+  "emailId": "narendra.kolluru@telusinternational.com",
+  "designation": "Project Manager",
+  "department": "Development",
+  "tech": [
+    {
+      "id": 1,
+      "name": "Java"
+    }
+   * Responses:
+      * 200: Interviewer updated (Interviewer)
+      * 400: Invalid input
+Delete Interviewer
+* DELETE /interviewer/{id}
+   * Summary: Delete interviewers from the database.
+   * Description: Delete interviewers.
+   * Tag: Interviewers
+   * OperationId: deleteInterviewer
+   * Path Parameter: id(string, required) (id that need to be deleted)
+   * Responses:
+      * 200: Interviewer deleted
+      * 400: Invalid ID supplied
+      * 404: Interviewer not found
+________________
+
+
+4. Interview Scheduling (/schedule)
+Schedule Interview
+* POST /schedule
+   * Summary: Add interview to the database.
+   * Description: Add interview.
+   * Tag: Schedule
+   * OperationId: addInterview
+   * Request Body: 
+{
+  "candidateInfo": {
+    "id": 1,
+    "name": "Santosh",
+    "email": "santosh.mahato@telusinternational.com",
+    "position": "Team Lead",
+    "resume": "TBD",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  },
+  "interviewersInfo": [
+    {
+      "id": 1,
+      "name": "Narendra",
+      "emailId": "narendra.kolluru@telusinternational.com",
+      "designation": "Project Manager",
+      "department": "Development",
+      "tech": [
+        {
+          "id": 1,
+          "name": "Java"
+        }
+      ]
+    }
+  ],
+  "calendarInfo": {
+    "date": "01-11-2025",
+    "startTime": "13:00",
+    "endTime": "14:00"
+  }
+}
+   * Responses:
+      * 200: Interview scheduled 
+{
+  "id": 1,
+  "candidateInfo": {
+    "id": 1,
+    "name": "Santosh",
+    "email": "santosh.mahato@telusinternational.com",
+    "position": "Team Lead",
+    "resume": "TBD",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  },
+  "interviewersInfo": [
+    {
+      "id": 1,
+      "name": "Narendra",
+      "emailId": "narendra.kolluru@telusinternational.com",
+      "designation": "Project Manager",
+      "department": "Development",
+      "tech": [
+        {
+          "id": 1,
+          "name": "Java"
+        }
+      ]
+    }
+  ],
+  "calendarInfo": {
+    "date": "01-11-2025",
+    "startTime": "13:00",
+    "endTime": "14:00"
+  }
+}
+      * 400: Invalid input
+Get All Interviews
+* GET /schedule
+   * Summary:  Retrieve all scheduled interviews.
+   * Description: Get all the interviews.
+   * Tag: Interview
+   * OperationId: addInterview
+   * Responses:
+      * 200: 
+[
+  {
+    "id": 1,
+    "candidateInfo": {
+      "id": 1,
+      "name": "Santosh",
+      "email": "santosh.mahato@telusinternational.com",
+      "position": "Team Lead",
+      "resume": "TBD",
+      "tech": [
+        {
+          "id": 1,
+          "name": "Java"
+        }
+      ]
+    },
+    "interviewersInfo": [
+      {
+        "id": 1,
+        "name": "Narendra",
+        "emailId": "narendra.kolluru@telusinternational.com",
+        "designation": "Project Manager",
+        "department": "Development",
+        "tech": [
+          {
+            "id": 1,
+            "name": "Java"
+          }
+        ]
+      }
+    ],
+    "calendarInfo": {
+      "date": "01-11-2025",
+      "startTime": "13:00",
+      "endTime": "14:00"
+    }
+  }
+]
+Update Interview
+* PUT /schedule/{id}
+   * Description: Update interview details.
+   * Path Parameter: id (string, required)
+   * Request Body: 
+{
+  "candidateInfo": {
+    "id": 1,
+    "name": "Santosh",
+    "email": "santosh.mahato@telusinternational.com",
+    "position": "Team Lead",
+    "resume": "TBD",
+    "tech": [
+      {
+        "id": 1,
+        "name": "Java"
+      }
+    ]
+  },
+  "interviewersInfo": [
+    {
+      "id": 1,
+      "name": "Narendra",
+      "emailId": "narendra.kolluru@telusinternational.com",
+      "designation": "Project Manager",
+      "department": "Development",
+      "tech": [
+        {
+          "id": 1,
+          "name": "Java"
+        }
+      ]
+    }
+  ],
+  "calendarInfo": {
+    "date": "01-11-2025",
+    "startTime": "13:00",
+    "endTime": "14:00"
+  }
+}
+
+
+   * Responses:
+      * 200: Interview updated 
+{
+  "id": 1,
+  "name": "Santosh",
+  "email": "santosh.mahato@telusinternational.com",
+  "position": "Team Lead",
+  "resume": "TBD",
+  "tech": [
+    {
+      "id": 1,
+      "name": "Java"
+    }
+  ]
+}
+      * 400: Invalid input
+Delete Interview
+* DELETE /schedule/{id}
+   * Description: Delete an interview.
+   * Path Parameter: id (string, required)
+   * Responses:
+      * 200: Successful operation
+      * 400: Invalid input
